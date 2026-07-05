@@ -1,0 +1,37 @@
+{
+  "appId": "com.ironport.learning",
+  "appName": "IronPort Learning",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "http://localhost:8100",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0B0F14",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0B0F14"
+    },
+    "Keyboard": {
+      "resize": "native"
+    }
+  },
+  "cordova": {},
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystorePassword": "",
+      "keystoreAlias": "",
+      "keystoreAliasPassword": ""
+    }
+  },
+  "ios": {
+    "scheme": "IronPort Learning"
+  }
+}

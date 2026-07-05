@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "ironport-learning",
+  "builds": [
+    {
+      "src": "ironport-app-enhanced.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/ironport-app-enhanced.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

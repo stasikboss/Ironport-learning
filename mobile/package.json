@@ -1,0 +1,38 @@
+{
+  "name": "ironport-learning-mobile",
+  "version": "1.0.0",
+  "description": "IronPort Learning Mobile Application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "serve www",
+    "build": "npm run copy && npx cap sync",
+    "copy": "cp ../ironport-app-enhanced.html www/index.html",
+    "android": "npx cap open android",
+    "ios": "npx cap open ios",
+    "sync": "npx cap sync",
+    "add:android": "npx cap add android",
+    "add:ios": "npx cap add ios"
+  },
+  "keywords": [
+    "ironport",
+    "mobile",
+    "capacitor",
+    "learning"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^5.5.1",
+    "@capacitor/app": "^5.0.6",
+    "@capacitor/core": "^5.5.1",
+    "@capacitor/haptics": "^5.0.6",
+    "@capacitor/ios": "^5.5.1",
+    "@capacitor/keyboard": "^5.0.6",
+    "@capacitor/splash-screen": "^5.0.6",
+    "@capacitor/status-bar": "^5.0.6"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.5.1",
+    "serve": "^14.2.1"
+  }
+}
