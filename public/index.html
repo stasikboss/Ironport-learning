@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IronPort — תוכנית הכשרה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Heebo:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0F14;
+    --panel: #121922;
+    --panel-2: #161F2A;
+    --hairline: #223140;
+    --text: #E4ECF1;
+    --text-dim: #8FA3B0;
+    --text-faint: #55697A;
+    --signal: #4FD1C5;
+    --signal-dim: rgba(79,209,197,0.15);
+    --amber: #F2A65A;
+    --amber-dim: rgba(242,166,90,0.15);
+    --success: #6FCF97;
+    --danger: #E17B72;
+    --radius: 10px;
+    --font-display: 'Rubik', 'Segoe UI', Arial, sans-serif;
+    --font-body: 'Heebo', 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--signal-dim); color:var(--text); }
+
+  a{ color:var(--signal); }
+
+  .app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 20px 80px;
+  }
+
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:var(--font-display);
+    font-weight:800;
+    font-size:32px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  h1 span{ color:var(--signal); }
+  .subtitle{
+    color:var(--text-dim);
+    font-size:14.5px;
+    margin-top:6px;
+    max-width:560px;
+  }
+  .progress-badge{
+    font-family:var(--font-mono);
+    text-align:center;
+    background:var(--panel);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius);
+    padding:12px 22px;
+    min-width:130px;
+  }
+  .progress-badge .pct{
+    font-size:26px;
+    font-weight:600;
+    color:var(--signal);
+  }
+  .progress-badge .lbl{
+    font-size:10.5px;
+    color:var(--text-faint);
+    letter-spacing:.08em;
+    margin-top:2px;
+  }
+
+  .trace{
+    background:var(--panel);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius);
+    padding:22px 24px 18px;
+    margin-bottom:22px;
+    overflow-x:auto;
+  }
+  .trace-label{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:.1em;
+    margin-bottom:14px;
+    display:flex;
+    justify-content:space-between;
+  }
+
+  .content{
+    background:var(--panel);
+    border:1px solid var(--hairline);
+    border-radius:var(--radius);
+    padding:28px 30px;
+    min-height:420px;
+  }
+
+  .stage-title{
+    font-family:var(--font-display);
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 16px;
+  }
+
+  .block{ margin-bottom:24px; }
+  .block h3{
+    font-family:var(--font-display);
+    font-size:15px;
+    font-weight:600;
+    margin:0 0 10px;
+    color:var(--signal);
+  }
+  .block p{ font-size:14px; color:var(--text); margin:0 0 8px; line-height:1.7; }
+  .block ul{ margin:10px 0; padding-right:20px; }
+  .block li{ font-size:14px; margin-bottom:8px; line-height:1.6; }
+
+  .note{
+    background:var(--signal-dim);
+    border:1px solid var(--signal);
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:13px;
+    color:var(--text);
+    margin:16px 0;
+  }
+  .note b{ color:var(--signal); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="eyebrow">Cisco Secure Email / Message Tracking Learning Path</div>
+      <h1>IronPort<span> — תוכנית הכשרה</span></h1>
+      <div class="subtitle">מסלול למידה מובנה: מ-DNS ועד מעבדת dCloud, לפי סדר עבודה שנועד למנוע בלבול בין יסודות למנגנוני הגנה מתקדמים.</div>
+    </div>
+    <div class="progress-badge">
+      <div class="pct">0%</div>
+      <div class="lbl">התקדמות כוללת</div>
+    </div>
+  </div>
+
+  <div class="trace">
+    <div class="trace-label"><span>MESSAGE TRACE — עקרון פעולה כללי</span><span>מוכן לפעולה</span></div>
+    <p style="color:var(--text-dim); font-size:13px; text-align:center; margin-top:12px;">
+      מסלול המייל: MUA → MTA / IronPort → SPF Check → DKIM Check → DMARC Policy → Inbox / Quarantine
+    </p>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">01 / 08</div>
+    <h2 class="stage-title">שלב 1 — רשומות DNS בעולם המייל</h2>
+
+    <div class="block">
+      <h3>ברוכים הבאים לתוכנית ההכשרה!</h3>
+      <p>זוהי תוכנית הכשרה מקיפה ל-Cisco IronPort (Secure Email Gateway).</p>
+      <p>התוכנית כוללת:</p>
+      <ul>
+        <li><strong>50+ שאלות חידון אינטראקטיביות</strong> - בדקו את ההבנה שלכם</li>
+        <li><strong>12 שלבי למידה מקיפים</strong> - מ-DNS ועד הגנה מתקדמת</li>
+        <li><strong>מעקב אחר התקדמות</strong> - עקבו אחר ההתקדמות שלכם</li>
+        <li><strong>לוח תוצאות</strong> - התחרו עם חברי הצוות</li>
+        <li><strong>מותאם למובייל</strong> - למדו מכל מקום</li>
+        <li><strong>תעודת סיום</strong> - קבלו הסמכה בסיום</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>מה תלמדו בתוכנית?</h3>
+      <p><strong>שלב 1-2:</strong> יסודות DNS - SPF, DKIM, DMARC, MX</p>
+      <p><strong>שלב 3-4:</strong> הבנת ארכיטקטורת המייל</p>
+      <p><strong>שלב 5-6:</strong> IronPort Core וסינון</p>
+      <p><strong>שלב 7-8:</strong> Message Tracking ופתרון בעיות</p>
+      <p><strong>שלב 9-10:</strong> הגנה מתקדמת וסימולציות</p>
+      <p><strong>שלב 11-12:</strong> תרגול מעשי וסיום</p>
+    </div>
+
+    <div class="note">
+      <b>התחילו עכשיו!</b> התוכנית המלאה כוללת תוכן מקיף, חידונים אינטראקטיביים, והדרכה שלב אחר שלב. גרסה זו היא הדגמה - לקבלת גישה מלאה לתוכנית ההכשרה האינטראקטיבית, צרו קשר עם מנהל המערכת.
+    </div>
+
+    <div class="block">
+      <h3>יכולות התוכנית המלאה</h3>
+      <ul>
+        <li>✅ 50+ שאלות חידון עם משוב מיידי</li>
+        <li>✅ מעקב אוטומטי אחר התקדמות</li>
+        <li>✅ סנכרון בין מכשירים</li>
+        <li>✅ לוח תוצאות לצוות</li>
+        <li>✅ הערות אישיות לכל שלב</li>
+        <li>✅ מצב חושך/אור</li>
+        <li>✅ ייצוא/ייבוא התקדמות</li>
+        <li>✅ תעודת סיום</li>
+      </ul>
+    </div>
+
+    <div class="block" style="margin-top:32px; padding-top:24px; border-top:1px solid var(--hairline);">
+      <h3>יצירת קשר</h3>
+      <p>לקבלת גישה מלאה לתוכנית ההכשרה האינטראקטיבית, צרו קשר עם מנהל המערכת.</p>
+      <p style="color:var(--signal); font-weight:600; margin-top:16px;">
+        📧 Email: admin@ironport.local<br>
+        🔗 GitHub: <a href="https://github.com/stasikboss/Ironport-learning" target="_blank" style="color:var(--signal);">github.com/stasikboss/Ironport-learning</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+console.log('IronPort Learning Platform - Loaded Successfully!');
+console.log('GitHub: https://github.com/stasikboss/Ironport-learning');
+console.log('Version: 2.0 - Demo Mode');
+</script>
+</body>
+</html>
