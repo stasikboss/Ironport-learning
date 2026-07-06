@@ -103,7 +103,6 @@
     display:flex;
     gap:10px;
     align-items:center;
-    flex-wrap:wrap;
   }
   .progress-badge{
     font-family:var(--font-mono);
@@ -143,16 +142,6 @@
   .icon-btn:hover{
     border-color:var(--signal);
     color:var(--signal);
-  }
-  .icon-btn.sync-btn{
-    position:relative;
-  }
-  .icon-btn.sync-btn.syncing{
-    animation:spin 1s linear infinite;
-  }
-  @keyframes spin{
-    from{ transform:rotate(0deg); }
-    to{ transform:rotate(360deg); }
   }
 
   /* ===== MAIL TRACE ===== */
@@ -624,23 +613,6 @@
     color:var(--text-dim);
     margin-bottom:20px;
   }
-  .modal input[type="email"],
-  .modal input[type="password"],
-  .modal input[type="text"]{
-    width:100%;
-    background:var(--panel-2);
-    border:1px solid var(--hairline);
-    border-radius:6px;
-    color:var(--text);
-    font-family:var(--font-body);
-    font-size:13px;
-    padding:10px 12px;
-    margin-bottom:12px;
-  }
-  .modal input:focus{
-    outline:none;
-    border-color:var(--signal);
-  }
   .modal-actions{
     display:flex;
     gap:10px;
@@ -739,41 +711,6 @@
   .toast.success{ border-color:var(--success); color:var(--success); }
   .toast.error{ border-color:var(--danger); color:var(--danger); }
 
-  /* ===== LOGIN PANEL ===== */
-  .login-panel{
-    max-width:400px;
-    margin:100px auto;
-    background:var(--panel);
-    border:1px solid var(--hairline);
-    border-radius:var(--radius);
-    padding:30px;
-  }
-  .login-panel h2{
-    font-family:var(--font-display);
-    margin:0 0 20px;
-    color:var(--signal);
-  }
-  .login-panel .tabs{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-  }
-  .login-panel .tab{
-    flex:1;
-    background:var(--panel-2);
-    border:1px solid var(--hairline);
-    padding:8px;
-    border-radius:6px;
-    cursor:pointer;
-    text-align:center;
-    font-size:13px;
-    transition:all .2s ease;
-  }
-  .login-panel .tab.active{
-    background:var(--signal-dim);
-    border-color:var(--signal);
-  }
-
   /* ===== PRINT STYLES ===== */
   @media print{
     body{ background:white; color:black; }
@@ -791,11 +728,6 @@
 <div class="app" id="app"></div>
 
 <script>
-/* ============ API CONFIGURATION ============ */
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000/api'
-  : 'https://your-backend-url.com/api';
-
 /* ============ DATA ============ */
 
 const STAGES = [
@@ -841,24 +773,6 @@ const STAGES = [
         options:['בשרת האימייל', 'ברשומת DNS של הדומיין', 'בכותרות המייל', 'בשרת הנמען'],
         correct:1,
         explanation:'ה-Public Key של DKIM מתפרסם ברשומת TXT ב-DNS של הדומיין השולח, כדי שכל שרת מקבל יוכל לאמת את החתימה'
-      },
-      {
-        q:'מה קורה כאשר SPF מחזיר "softfail"?',
-        options:['המייל נחסם מיד', 'המייל מסומן כחשוד אבל לא נחסם', 'המייל עובר בלי כל בעיה', 'SPF נכשל לחלוטין'],
-        correct:1,
-        explanation:'softfail (~all) מציין שהמייל חשוד אבל לא צריך לחסום אותו - זה מאפשר למנהל לבדוק בעיות בהגדרות'
-      },
-      {
-        q:'איזה רשומת DNS קובעת לאן מגיע מייל נכנס?',
-        options:['SPF', 'DKIM', 'MX', 'DMARC'],
-        correct:2,
-        explanation:'רשומת MX (Mail eXchange) מגדירה לאיזה שרת מייל נכנס צריך להגיע'
-      },
-      {
-        q:'מה ההבדל בין DMARC alignment strict ל-relaxed?',
-        options:['אין הבדל', 'strict דורש התאמה מדויקת, relaxed מאפשר subdomain', 'relaxed חמור יותר', 'strict בודק רק SPF'],
-        correct:1,
-        explanation:'strict דורש התאמה מדויקת של הדומיין, relaxed מאפשר גם subdomains (למשל mail.example.com יתאים ל-example.com)'
       }
     ]
   },
@@ -901,32 +815,893 @@ const STAGES = [
         options:['תוכנת דואר של משתמש', 'שרת שמעביר מיילים בין דומיינים', 'פרוטוקול הצפנה', 'מנגנון אנטי-ספאם'],
         correct:1,
         explanation:'MTA (Mail Transfer Agent) הוא שרת שמעביר מיילים בין דומיינים - IronPort הוא MTA עם יכולות סינון'
-      },
-      {
-        q:'למה Return-Path חשוב?',
-        options:['לבדיקת SPF', 'לשליחת הודעות bounce/NDR', 'לאימות DKIM', 'לבדיקת אנטי-וירוס'],
-        correct:1,
-        explanation:'Return-Path משמש לשליחת הודעות bounce (כשהמייל לא הגיע ליעדו) בחזרה לשולח'
-      },
-      {
-        q:'מה ההבדל העיקרי בין MUA ל-MTA?',
-        options:['אין הבדל', 'MUA הוא client, MTA הוא server', 'MUA בודק ספאם, MTA מצפין', 'MTA הוא Outlook'],
-        correct:1,
-        explanation:'MUA הוא Mail User Agent (client כמו Outlook), MTA הוא Mail Transfer Agent (server כמו IronPort)'
-      },
-      {
-        q:'איך תוקף יכול לעקוף SPF?',
-        options:['לזייף את ה-IP', 'להשתמש ב-Envelope From לגיטימי אבל Header From מזויף', 'למחוק את רשומת DNS', 'להצפין את המייל'],
-        correct:1,
-        explanation:'תוקף יכול להשתמש ב-Envelope From לגיטימי שעובר SPF, אבל לזייף את Header From שהמשתמש רואה - DMARC נועד למנוע זאת'
       }
     ]
+  },
+  {
+    id:'dmarctester',
+    name:'תרגול — dmarctester',
+    title:'שלב 3 — תרגול מעשי ב-dmarctester.com',
+    desc:'שלב חובה לפני מעבר לתיאוריה של Cisco. תראה בזמן אמת איך מייל "עובר" בין השכבות.',
+    blocks:[
+      {h:'משימה 1 — שליחה לגיטימית', html:`
+        <p>שלח מייל מהדומיין שלך לכתובת שהאתר מספק, ותעד:</p>
+        <ul>
+          <li>האם SPF החזיר pass / fail / softfail</li>
+          <li>האם חתימת DKIM תקינה</li>
+          <li>מה סטטוס ה-DMARC alignment (strict / relaxed)</li>
+        </ul>
+      `},
+      {h:'משימה 2 — סימולציית התחזות', html:`
+        <p>נסה לשלוח מייל עם Header From שונה מה-Envelope From, ותעד:</p>
+        <ul>
+          <li>איפה בדיוק הבדיקה נכשלה</li>
+          <li>איך policy כמו זה שב-IronPort היה תופס את זה — Reputation? Content Filter? DMARC verification?</li>
+        </ul>
+      `},
+      {h:'טיפ עבודה', html:`<div class="note"><b>המלצה:</b> תעד את שני התרחישים בטבלה קצרה, באותו פורמט שאתה משתמש בו לדוחות CSOC. זה יבנה לך אינטואיציה ישירה לאיך IronPort מציג ותופס אירועים דומים ב-Message Tracking.</div>`}
+    ],
+    resources:[
+      {title:'DMARC Tester — סביבת תרגול חיה', url:'https://www.dmarctester.com/'}
+    ],
+    checklist:[
+      'ביצעתי שליחה לגיטימית ותיעדתי SPF/DKIM/DMARC',
+      'ביצעתי סימולציית התחזות ותיעדתי איפה זה נכשל',
+      'אני יכול להסביר את שתי התוצאות למישהו שלא מכיר את הנושא'
+    ],
+    quiz:[
+      {
+        q:'מה יקרה אם Envelope From יעבור SPF אבל Header From יהיה שונה?',
+        options:['המייל יחסם אוטומטית', 'DMARC alignment ייכשל', 'המייל יעבור בלי בעיה', 'DKIM ייכשל'],
+        correct:1,
+        explanation:'כשיש אי התאמה בין Envelope From ל-Header From, DMARC alignment נכשל - זה בדיוק מה שהוא בא למנוע'
+      }
+    ]
+  },
+  {
+    id:'cisco-theory',
+    name:'תיאוריית Cisco',
+    title:'שלב 4 — מצגות Cisco Live',
+    desc:'בשלב זה עוברים על התיאוריה הרשמית של Cisco. חשוב לשמור על סדר: יסודות לפני מנגנוני ההגנה המתקדמים.',
+    blocks:[
+      {h:'סדר עבודה מומלץ', html:`
+        <p>עברו קודם על שתי המצגות שכבר יש לך, ואז חפשו בכנס לפי מונחי יסוד — לפני שנוגעים במצגות שמדברות על מנגנוני הגנה מתקדמים כמו <code>ETD</code> ו-DMARC ברמת enterprise.</p>
+      `},
+      {h:'מושגי ליבה של IronPort לחפש תוך כדי הצפייה', html:`
+        <ul>
+          <li>Mail Flow Policies — Incoming / Outgoing Mail Policies</li>
+          <li>Reputation Filtering — SenderBase / Cisco Talos</li>
+          <li>CASE engine — מנוע האנטי-ספאם</li>
+          <li>Content Filters לעומת Message Filters — <b>Message Filters רצים לפני CASE</b></li>
+          <li>DLP integration</li>
+          <li>Encryption — PXE (Postmaster Envelope)</li>
+        </ul>
+      `},
+      {h:'למה לדחות את ETD לשלב הבא', html:`<div class="note"><b>שים לב:</b> ETD (Email Threat Defense) ו-DMARC המתקדם הם שכבה שנבנית מעל היסודות. אם תיגע בהם לפני שיש לך שליטה מלאה בזרימת המייל הבסיסית, תתבלבל בין "מה IronPort core עושה" ל"מה מודול הרחבה עושה".</div>`}
+    ],
+    resources:[
+      {title:'חיפוש מצגות נוספות — Cisco Live', url:'https://www.ciscolive.com/'}
+    ],
+    checklist:[
+      'עברתי על שתי המצגות הקיימות',
+      'אני יודע להסביר את ההבדל בין Content Filter ל-Message Filter',
+      'אני יודע מה תפקיד CASE engine בשרשרת הסינון'
+    ],
+    quiz:[
+      {
+        q:'מה ההבדל המרכזי בין Message Filters ל-Content Filters?',
+        options:['אין הבדל', 'Message Filters רצים לפני מנועי הסינון', 'Content Filters רצים ראשונים', 'Message Filters בודקים רק כותרות'],
+        correct:1,
+        explanation:'Message Filters רצים לפני מנועי הסינון (כמו CASE) ויכולים לעצור מייל מוקדם מאוד בתהליך'
+      }
+    ]
+  },
+  {
+    id:'core-concepts',
+    name:'מושגי ליבה — IronPort',
+    title:'שלב 5 — ארכיטקטורת הסינון של IronPort',
+    desc:'סדר הפעולות שמייל עובר בתוך ה-appliance, משער כניסה ועד תיבת הדואר.',
+    blocks:[
+      {h:'שרשרת עיבוד מייל טיפוסית', html:`
+        <table class="ref">
+          <tr><th>#</th><th>שכבה</th><th>מה קורה בה</th></tr>
+          <tr><td class="mono-cell">1</td><td>Reputation Filtering</td><td>בדיקת IP/דומיין השולח מול SenderBase / Talos — לפני שנפתח בכלל התוכן</td></tr>
+          <tr><td class="mono-cell">2</td><td>Message Filters</td><td>חוקים ברמת ה-MTA, רצים לפני מנועי הסינון — עצירה מוקדמת</td></tr>
+          <tr><td class="mono-cell">3</td><td>Anti-Spam (CASE)</td><td>ניתוח תוכן והקשר לזיהוי ספאם</td></tr>
+          <tr><td class="mono-cell">4</td><td>Anti-Virus</td><td>סריקת קבצים מצורפים</td></tr>
+          <tr><td class="mono-cell">5</td><td>Content Filters</td><td>חוקים עסקיים — DLP, מילות מפתח, סוגי קבצים</td></tr>
+          <tr><td class="mono-cell">6</td><td>Encryption (PXE)</td><td>הצפנה יוצאת לפי policy</td></tr>
+        </table>
+      `},
+      {h:'למה הסדר חשוב', html:`<p>Message Filter שגוי יכול לחסום מייל <b>לפני</b> שהוא בכלל מגיע ל-Content Filter — בדיוק כמו policy שגוי מוקדם ב-rulebase של Check Point שחוסם תעבורה לפני שהיא מגיעה לחוק הרלוונטי.</p>`}
+    ],
+    checklist:[
+      'אני יודע לשרטט את סדר השכבות מזיכרון',
+      'אני מבין למה Reputation Filtering קורה לפני ניתוח תוכן',
+      'אני יודע להסביר את PXE כמנגנון הצפנה יוצא'
+    ],
+    quiz:[
+      {
+        q:'באיזה שלב מתבצעת בדיקת Reputation Filtering?',
+        options:['אחרי CASE', 'אחרי Content Filters', 'לפני כל הבדיקות האחרות', 'אחרי Anti-Virus'],
+        correct:2,
+        explanation:'Reputation Filtering מתבצעת ראשונה - עוד לפני שבודקים את תוכן המייל, כדי לחסוך משאבים'
+      },
+      {
+        q:'מה תפקיד CASE engine?',
+        options:['הצפנה', 'אנטי-ספאם וניתוח תוכן', 'סינון IP', 'אנטי-וירוס'],
+        correct:1,
+        explanation:'CASE (Context Adaptive Scanning Engine) הוא מנוע האנטי-ספאם של IronPort לניתוח תוכן והקשר'
+      }
+    ]
+  },
+  {
+    id:'dcloud-lab',
+    name:'מעבדה — DCloud',
+    title:'שלב 6 — מעבדת DCloud',
+    desc:'יישום מעשי בסביבת appliance אמיתית. כאן מתחברים כל הפרקים הקודמים לכדי workflow אחד.',
+    blocks:[
+      {h:'סדר עבודה מומלץ במעבדה', html:`
+        <ul>
+          <li>הגדרת Incoming Mail Policy בסיסי</li>
+          <li>הגדרת Content Filter לפי כלל שהגדרת בעצמך (למשל, סוג קובץ מצורף)</li>
+          <li>שחזור תרחיש ה-spoofing מ-dmarctester בתוך IronPort עצמו, ובדיקה איך ה-Mail Policy מזהה ותופסת אותו</li>
+          <li>בדיקת Message Tracking — כלי ניתוח הלוגים המרכזי (המקביל ל-SmartLog אצל Check Point)</li>
+        </ul>
+      `},
+      {h:'מה לתעד', html:`<div class="note"><b>חשוב:</b> תעד כל מקרה שבו policy לא התנהג כמו שציפית — זה בדיוק המקרים שבונים הבנה עמוקה, לא ההצלחות.</div>`}
+    ],
+    resources:[
+      {title:'Cisco dCloud — סביבות מעבדה', url:'https://content.ciscodcloud.com/'}
+    ],
+    checklist:[
+      'הגדרתי Incoming Mail Policy',
+      'הגדרתי ובדקתי Content Filter משלי',
+      'שחזרתי תרחיש spoofing ובדקתי את התגובה של המערכת',
+      'עברתי על Message Tracking וזיהיתי שם את האירועים שיצרתי'
+    ],
+    quiz:[
+      {
+        q:'מהו Message Tracking?',
+        options:['מנוע אנטי-ספאם', 'כלי ניתוח לוגים', 'פרוטוקול הצפנה', 'סוג של Content Filter'],
+        correct:1,
+        explanation:'Message Tracking הוא כלי ניתוח הלוגים המרכזי של IronPort, דומה ל-SmartLog של Check Point'
+      }
+    ]
+  },
+  {
+    id:'message-tracking',
+    name:'Message Tracking מתקדם',
+    title:'שלב 7 — Message Tracking & Troubleshooting',
+    desc:'שליטה מלאה בכלי החקירה המרכזי של IronPort. למידה כיצד לעקוב אחר מיילים, לזהות בעיות ולפתור תקלות.',
+    blocks:[
+      {h:'יכולות מרכזיות של Message Tracking', html:`
+        <ul>
+          <li><b>חיפוש לפי פרמטרים:</b> Sender, Recipient, Subject, Message-ID, IP Address, Date Range</li>
+          <li><b>פרטי מסלול:</b> מעקב אחר כל שלב שהמייל עבר - Reputation, Filters, AV, Anti-Spam</li>
+          <li><b>זיהוי חסימות:</b> הבנה מדויקת איזו policy או filter חסמה את המייל</li>
+          <li><b>Quarantine Management:</b> שחרור או מחיקת מיילים מקוורנטיין</li>
+        </ul>
+      `},
+      {h:'תרחישי Troubleshooting נפוצים', html:`
+        <table class="ref">
+          <tr><th>תסמין</th><th>איפה לבדוק</th><th>פתרון אפשרי</th></tr>
+          <tr><td>מייל לא הגיע</td><td>Message Tracking - חפש לפי Sender/Recipient</td><td>בדוק Reputation, Message Filters, Content Filters</td></tr>
+          <tr><td>מיילים מסומנים כספאם</td><td>CASE score ב-Message Tracking</td><td>התאם Anti-Spam settings או Whitelist</td></tr>
+          <tr><td>קבצים מצורפים נחסמים</td><td>Content Filter logs</td><td>בדוק File Type filtering policies</td></tr>
+          <tr><td>מייל יוצא נחסם</td><td>Outgoing Mail Policy + SPF של הדומיין שלך</td><td>תקן SPF record או Outgoing settings</td></tr>
+        </table>
+      `},
+      {h:'טיפים למקצוענים', html:`<div class="note info"><b>Best Practice:</b> שמור Message-ID של מיילים בעייתיים - זה המזהה הייחודי הכי אמין לחיפוש ב-Message Tracking. נמצא בכותרות המייל תחת "Message-ID:"</div>`}
+    ],
+    checklist:[
+      'אני יודע לחפש מייל ב-Message Tracking לפי פרמטרים שונים',
+      'אני מבין את כל השלבים שמייל עובר ויודע לזהות איפה הוא נעצר',
+      'אני יודע לשחרר מייל מקוורנטיין',
+      'אני יכול לאבחן בעיית ספאם false positive'
+    ],
+    quiz:[
+      {
+        q:'מהו המזהה הכי אמין לחיפוש מייל ב-Message Tracking?',
+        options:['Subject', 'Sender Email', 'Message-ID', 'Timestamp'],
+        correct:2,
+        explanation:'Message-ID הוא מזהה ייחודי שניתן לכל מייל ונשאר קבוע לאורך כל המסלול'
+      },
+      {
+        q:'אם מייל נחסם ב-Reputation Filtering, באיזה שלב זה קרה?',
+        options:['אחרי CASE', 'לפני כל השלבים האחרים', 'אחרי Content Filters', 'אחרי AV scan'],
+        correct:1,
+        explanation:'Reputation Filtering הוא השלב הראשון - עוד לפני ניתוח תוכן המייל'
+      }
+    ]
+  },
+  {
+    id:'etd-advanced',
+    name:'ETD — הגנה מתקדמת',
+    title:'שלב 8 — Email Threat Defense (ETD)',
+    desc:'שכבת ההגנה המתקדמת של Cisco מעל IronPort הבסיסי. זיהוי איומים מתקדמים, URL Rewriting, Sandboxing ועוד.',
+    blocks:[
+      {h:'מהו ETD?', html:`
+        <p>Email Threat Defense הוא מודול מתקדם שמוסיף יכולות זיהוי איומים beyond signature-based detection:</p>
+        <ul>
+          <li><b>URL Analysis:</b> בדיקה דינמית של קישורים, כולל URL Rewriting לבדיקה בזמן קליק</li>
+          <li><b>Sandboxing:</b> הרצת קבצים מצורפים בסביבה מבודדת לזיהוי malware לא מוכר</li>
+          <li><b>Threat Intelligence:</b> אינטגרציה עם Cisco Talos לזיהוי איומים בזמן אמת</li>
+          <li><b>Forged Email Detection:</b> זיהוי מתקדם של BEC (Business Email Compromise)</li>
+        </ul>
+      `},
+      {h:'הבדלים מ-IronPort Core', html:`
+        <table class="ref">
+          <tr><th>תכונה</th><th>IronPort Core</th><th>ETD</th></tr>
+          <tr><td>Anti-Spam</td><td>CASE engine - signature based</td><td>Machine learning + behavioral analysis</td></tr>
+          <tr><td>URL Protection</td><td>Static blacklist checking</td><td>Dynamic analysis + URL Rewriting</td></tr>
+          <tr><td>Malware Detection</td><td>AV signatures</td><td>Sandboxing + threat intelligence</td></tr>
+          <tr><td>Spoofing Detection</td><td>SPF/DKIM/DMARC</td><td>+ Domain lookalike detection</td></tr>
+        </table>
+      `},
+      {h:'מתי להשתמש ב-ETD', html:`<div class="note"><b>שיקולים:</b> ETD מוסיף עלויות ותאריך ביצועים (sandboxing לוקח זמן). השתמש בו כשהארגון חשוף לאיומים מתקדמים - BEC, targeted attacks, zero-day malware. לארגונים קטנים, IronPort Core + Talos reputation יכולים להספיק.</div>`}
+    ],
+    resources:[
+      {title:'Cisco Email Threat Defense Overview', url:'https://www.cisco.com/c/en/us/products/security/email-threat-defense/index.html'}
+    ],
+    checklist:[
+      'אני מבין את ההבדל בין IronPort Core ל-ETD',
+      'אני יודע להסביר מהו URL Rewriting ולמה זה שימושי',
+      'אני מכיר את המושג Sandboxing ואת העלויות שלו',
+      'אני יכול להמליץ מתי לשקול ETD לעומת IronPort בלבד'
+    ],
+    quiz:[
+      {
+        q:'מה עושה URL Rewriting ב-ETD?',
+        options:['חוסם את כל הקישורים', 'משנה קישורים לבדיקה בזמן קליק', 'מצפין קישורים', 'מוחק קישורים חשודים'],
+        correct:1,
+        explanation:'URL Rewriting משנה קישורים במייל כך שכשהמשתמש לוחץ, הקישור עובר דרך שרת Cisco שבודק אותו בזמן אמת'
+      },
+      {
+        q:'מהו Sandboxing?',
+        options:['סוג של Content Filter', 'הרצת קבצים בסביבה מבודדת', 'פרוטוקול הצפנה', 'סוג של Message Filter'],
+        correct:1,
+        explanation:'Sandboxing מריץ קבצים מצורפים חשודים בסביבה מבודדת (VM) כדי לזהות malware שלא נתפס ע"י signatures'
+      }
+    ]
+  },
+  {
+    id:'real-scenarios',
+    name:'תרחישים מהשטח',
+    title:'שלב 9 — תרחישים אמיתיים ו-Case Studies',
+    desc:'מקרים אמיתיים מהעבודה היום-יומית עם IronPort. כל תרחיש כולל הבעיה, החקירה והפתרון.',
+    blocks:[
+      {h:'תרחיש 1: Executive False Positive', html:`
+        <p><b>הבעיה:</b> מנכ"ל הארגון מדווח שמייל חשוב מלקוח לא הגיע. הלקוח אומר ששלח.</p>
+        <p><b>חקירה:</b></p>
+        <ul>
+          <li>חיפוש ב-Message Tracking לפי sender email של הלקוח</li>
+          <li>נמצא המייל - נחסם ע"י Content Filter שמחפש את המילה "invoice" + קובץ PDF</li>
+          <li>ה-Content Filter הוגדר רחב מדי ותפס גם מיילים לגיטימיים</li>
+        </ul>
+        <p><b>פתרון:</b> שחרור המייל מקוורנטיין + עדכון Content Filter להחרגת דומיין הלקוח או הוספת white list rule</p>
+      `},
+      {h:'תרחיש 2: Phishing Campaign', html:`
+        <p><b>הבעיה:</b> 15 עובדים קיבלו מייל מזויף המתחזה ל-IT Department, מבקש reset password.</p>
+        <p><b>חקירה:</b></p>
+        <ul>
+          <li>בדיקת המייל ב-Message Tracking - SPF failed, DKIM לא קיים</li>
+          <li>ה-Header From היה it-support@company.com אבל Envelope From היה @phish-domain.ru</li>
+          <li>DMARC alignment failed אבל ה-policy של הדומיין היה "none" - לא חסם</li>
+        </ul>
+        <p><b>פתרון:</b>
+          <ol>
+            <li>חסימת sender domain ב-Reputation Filter</li>
+            <li>יצירת Message Filter לחסימת מיילים עם SPF fail + keyword "password"</li>
+            <li>המלצה לארגון לשנות DMARC policy ל-quarantine</li>
+          </ol>
+        </p>
+      `},
+      {h:'תרחיש 3: Legitimate Marketing Blocked', html:`
+        <p><b>הבעיה:</b> newsletter של הארגון נחסם אצל לקוחות שמשתמשים ב-IronPort.</p>
+        <p><b>חקירה:</b></p>
+        <ul>
+          <li>בדיקת Reputation של IP השרת השולח - נמוך בגלל volume גבוה</li>
+          <li>SPF ו-DKIM היו תקינים, אבל CASE score גבוה (נראה כמו spam)</li>
+        </ul>
+        <p><b>פתרון:</b>
+          <ul>
+            <li>הוספת sending IP ל-Sender Group עם reputation override</li>
+            <li>שיפור תוכן המיילים - פחות קישורים, יותר טקסט, unsubscribe ברור</li>
+            <li>Warm-up של IP reputation - העלאה הדרגתית של volume</li>
+          </ul>
+        </p>
+      `}
+    ],
+    checklist:[
+      'אני יכול לתאר workflow מלא של חקירת מייל שלא הגיע',
+      'אני מבין את ההבדל בין false positive ל-true positive',
+      'אני יודע איך להגיב לקמפיין phishing',
+      'אני יכול להסביר למה reputation נמוכה יכולה לחסום מיילים לגיטימיים'
+    ]
+  },
+  {
+    id:'cp-mapping',
+    name:'מיפוי ל-Check Point',
+    title:'שלב 10 — מיפוי מושגים ל-Check Point / FortiGate',
+    desc:'קיצור עקומת הלמידה על בסיס מה שאתה כבר שולט בו.',
+    blocks:[
+      {h:'טבלת מיפוי', html:`
+        <table class="ref">
+          <tr><th>IronPort</th><th>מקביל ב-Check Point / FortiGate</th></tr>
+          <tr><td>Message Tracking</td><td>SmartLog / FortiView</td></tr>
+          <tr><td>Mail Flow Policy</td><td>Access Rule / Security Policy Rulebase</td></tr>
+          <tr><td>Message Filters (רצים ראשונים)</td><td>חוקים מוקדמים ב-rulebase, לפני inspection profiles</td></tr>
+          <tr><td>Content Filters</td><td>Application Control / DLP Blade</td></tr>
+          <tr><td>Reputation Filtering (Talos)</td><td>ThreatCloud / IP Reputation</td></tr>
+          <tr><td>PXE Encryption</td><td>VPN / Data Protection policies</td></tr>
+          <tr><td>CASE Engine</td><td>Anti-Bot / Threat Prevention blade</td></tr>
+          <tr><td>ETD Sandboxing</td><td>Threat Emulation / SandBlast</td></tr>
+        </table>
+      `},
+      {h:'פילוסופיות דומות', html:`
+        <ul>
+          <li><b>Defense in Depth:</b> גם IronPort וגם Check Point משתמשים בשכבות הגנה מרובות</li>
+          <li><b>Order Matters:</b> סדר הבדיקות קריטי בשני המוצרים</li>
+          <li><b>Log Investigation:</b> Message Tracking ≈ SmartLog - אותה פילוסופיה של חקירה</li>
+          <li><b>Reputation First:</b> שני המוצרים בודקים reputation לפני ניתוח עמוק</li>
+        </ul>
+      `}
+    ],
+    checklist:[
+      'אני יכול להסביר מנגנון IronPort דרך אנלוגיה מ-Check Point למישהו מהצוות'
+    ],
+    quiz:[
+      {
+        q:'מה המקביל ל-Message Tracking ב-Check Point?',
+        options:['SmartConsole', 'SmartLog', 'Policy Editor', 'Gaia Portal'],
+        correct:1,
+        explanation:'SmartLog הוא כלי חקירת הלוגים של Check Point, בדיוק כמו Message Tracking ב-IronPort'
+      }
+    ]
+  },
+  {
+    id:'completion',
+    name:'סיום וסיכום',
+    title:'🎓 סיום התוכנית',
+    desc:'סיימת את מסלול ההכשרה! הנה סיכום המסע וההישגים שלך.',
+    isCertificate:true
+  },
+  {
+    id:'glossary',
+    name:'מילון מושגים',
+    title:'מילון מושגים מרכזי',
+    desc:'רפרנס מהיר לכל המונחים שעלו לאורך התוכנית.',
+    isGlossary:true
   }
 ];
 
-// Due to character limits, I'll continue with the remaining stages in the next part...
-// The file is getting too long. Let me create it as a modular structure.
+const TERMS = [
+  {t:'SPF', d:'רשומת DNS שמגדירה אילו שרתי דוא"ל מורשים לשלוח בשם הדומיין. בודקת את ה-Envelope From.'},
+  {t:'DKIM', d:'חתימה קריפטוגרפית על תוכן המייל, מאמתת שהתוכן לא שונה במעבר.'},
+  {t:'DMARC', d:'מדיניות אכיפה המחברת SPF/DKIM ל-Header From, כולל none/quarantine/reject ודיווחים.'},
+  {t:'MX', d:'רשומת DNS שמגדירה לאן מגיע מייל נכנס לדומיין. לא קשורה לאבטחת שליחה.'},
+  {t:'MUA', d:'Mail User Agent — תוכנת הקצה של המשתמש (Outlook, Gmail וכו׳).'},
+  {t:'MTA', d:'Mail Transfer Agent — השרת שמעביר מייל בין דומיינים. IronPort הוא MTA עם שכבות סינון.'},
+  {t:'Envelope From (MAIL FROM)', d:'הכתובת שנבדקת ע"י SPF, לא נראית למשתמש הקצה.'},
+  {t:'Header From', d:'הכתובת שהמשתמש רואה בתיבת הדואר. נבדקת ע"י DMARC alignment.'},
+  {t:'Return-Path', d:'שדה בכותרת המייל, לרוב זהה ל-Envelope From, משמש לבאונסים.'},
+  {t:'Reputation Filtering', d:'סינון ראשוני של IP/דומיין השולח מול SenderBase/Talos, לפני ניתוח תוכן.'},
+  {t:'CASE Engine', d:'מנוע האנטי-ספאם של IronPort לניתוח תוכן והקשר.'},
+  {t:'Message Filters', d:'חוקים ברמת ה-MTA שרצים לפני מנועי הסינון (CASE וכו׳).'},
+  {t:'Content Filters', d:'חוקים עסקיים לתוכן — DLP, מילות מפתח, סוגי קבצים — רצים מאוחר יותר בשרשרת.'},
+  {t:'PXE', d:'Postmaster Envelope — מנגנון הצפנה יוצא של IronPort.'},
+  {t:'DLP', d:'Data Loss Prevention — מניעת דליפת מידע רגיש דרך המייל.'},
+  {t:'ETD', d:'Email Threat Defense — שכבת הגנה מתקדמת של Cisco עם sandboxing, URL analysis ו-ML.'},
+  {t:'Message-ID', d:'מזהה ייחודי לכל מייל, הכי אמין לחיפוש ב-Message Tracking.'},
+  {t:'SenderBase', d:'מסד נתוני reputation של Cisco, בודק אמינות של IP ודומיינים שולחים.'},
+  {t:'Talos', d:'צוות מחקר איומים של Cisco, מספק threat intelligence לכל מוצרי האבטחה.'},
+  {t:'Quarantine', d:'אזור בידוד למיילים חשודים - לא נמחקים אבל לא מגיעים לתיבה.'},
+  {t:'BEC', d:'Business Email Compromise — התחזות למנהלים לצורך הונאה כספית.'},
+  {t:'Sandboxing', d:'הרצת קבצים חשודים בסביבה מבודדת לזיהוי malware לא ידוע.'},
+  {t:'URL Rewriting', d:'שינוי קישורים במייל כדי לבדוק אותם בזמן קליק דרך שרת Cisco.'},
+  {t:'DMARC Alignment', d:'בדיקת התאמה בין Header From ל-SPF/DKIM - סוגר פער spoofing.'},
+  {t:'False Positive', d:'מייל לגיטימי שנחסם בטעות על ידי מערכת האבטחה.'}
+];
 
+/* ============ STATE ============ */
+
+let state = { current: 0, checks: {}, notes: {}, quizAnswers: {}, theme: 'dark', startDate: null };
+
+function loadState(){
+  try{
+    const saved = localStorage.getItem('ironport-progress');
+    if(saved){
+      const parsed = JSON.parse(saved);
+      state = Object.assign({current:0, checks:{}, notes:{}, quizAnswers:{}, theme:'dark', startDate:null}, parsed);
+      if(!state.startDate) state.startDate = new Date().toISOString();
+    } else {
+      state.startDate = new Date().toISOString();
+    }
+  }catch(e){
+    state.startDate = new Date().toISOString();
+  }
+  applyTheme();
+  render();
+}
+
+function saveState(){
+  try{
+    localStorage.setItem('ironport-progress', JSON.stringify(state));
+  }
+  catch(e){ showToast('שמירה נכשלה', 'error'); }
+}
+
+function stageProgress(stage){
+  if(!stage.checklist) return null;
+  const done = (state.checks[stage.id]||[]).length;
+  return {done, total: stage.checklist.length};
+}
+
+function overallPct(){
+  let done=0, total=0;
+  STAGES.forEach(s=>{
+    if(s.checklist){ total += s.checklist.length; done += (state.checks[s.id]||[]).length; }
+  });
+  return total ? Math.round(done/total*100) : 0;
+}
+
+function quizProgress(){
+  let correct=0, total=0;
+  STAGES.forEach(s=>{
+    if(s.quiz){
+      s.quiz.forEach((q,i)=>{
+        total++;
+        const ans = (state.quizAnswers[s.id]||{})[i];
+        if(ans !== undefined && ans === q.correct) correct++;
+      });
+    }
+  });
+  return {correct, total};
+}
+
+function toggleCheck(stageId, idx){
+  const arr = state.checks[stageId] || [];
+  const pos = arr.indexOf(idx);
+  if(pos>-1) arr.splice(pos,1); else arr.push(idx);
+  state.checks[stageId] = arr;
+  saveState();
+  render();
+}
+
+function saveNote(stageId, text){
+  state.notes[stageId] = text;
+  saveState();
+  showToast('ההערה נשמרה', 'success');
+}
+
+function answerQuiz(stageId, quizIdx, optionIdx){
+  if(!state.quizAnswers[stageId]) state.quizAnswers[stageId] = {};
+  state.quizAnswers[stageId][quizIdx] = optionIdx;
+  saveState();
+  render();
+}
+
+function goStage(i){
+  state.current = i;
+  saveState();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function toggleTheme(){
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  saveState();
+  applyTheme();
+}
+
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', state.theme);
+}
+
+function exportProgress(){
+  const dataStr = JSON.stringify(state, null, 2);
+  const dataBlob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `ironport-progress-${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+  showToast('ההתקדמות יוצאה בהצלחה', 'success');
+}
+
+function importProgress(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try{
+        const imported = JSON.parse(ev.target.result);
+        state = Object.assign({current:0, checks:{}, notes:{}, quizAnswers:{}, theme:'dark'}, imported);
+        saveState();
+        applyTheme();
+        render();
+        showToast('ההתקדמות יובאה בהצלחה', 'success');
+      }catch(err){
+        showToast('שגיאה בייבוא הקובץ', 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function resetProgress(){
+  showModal(
+    'איפוס התקדמות',
+    'האם אתה בטוח שברצונך לאפס את כל ההתקדמות? פעולה זו לא ניתנת לביטול.',
+    [
+      {text:'ביטול', action:()=>{}},
+      {text:'איפוס', danger:true, action:()=>{
+        state = {current:0, checks:{}, notes:{}, quizAnswers:{}, theme:state.theme, startDate:new Date().toISOString()};
+        saveState();
+        render();
+        showToast('ההתקדמות אופסה', 'success');
+      }}
+    ]
+  );
+}
+
+function showToast(message, type='success'){
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.classList.add('show'), 100);
+  setTimeout(()=>{
+    toast.classList.remove('show');
+    setTimeout(()=>toast.remove(), 300);
+  }, 3000);
+}
+
+function showModal(title, message, buttons){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal">
+      <h3>${title}</h3>
+      <p>${message}</p>
+      <div class="modal-actions">
+        ${buttons.map((b,i)=>`<button class="modal-btn ${b.danger?'danger':i===buttons.length-1?'primary':''}" data-idx="${i}">${b.text}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelectorAll('.modal-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = parseInt(btn.dataset.idx);
+      buttons[idx].action();
+      overlay.remove();
+    });
+  });
+  overlay.addEventListener('click', e=>{
+    if(e.target === overlay) overlay.remove();
+  });
+}
+
+/* ============ RENDER ============ */
+
+function render(){
+  const app = document.getElementById('app');
+  const pct = overallPct();
+  const stage = STAGES[state.current];
+
+  app.innerHTML = `
+    <div class="header">
+      <div>
+        <div class="eyebrow">Cisco Secure Email &nbsp;/&nbsp; Message Tracking Learning Path</div>
+        <h1>IronPort<span> — תוכנית הכשרה מתקדמת</span></h1>
+        <div class="subtitle">מסלול למידה מובנה: מ-DNS ועד מעבדת dCloud, כולל חידונים, הערות אישיות וסיכום מקצועי.</div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="החלף ערכת נושא">🌓</button>
+        <button class="icon-btn" onclick="exportProgress()" title="ייצוא התקדמות">💾</button>
+        <button class="icon-btn" onclick="importProgress()" title="ייבוא התקדמות">📥</button>
+        <button class="icon-btn" onclick="resetProgress()" title="איפוס התקדמות">🔄</button>
+        <div class="progress-badge">
+          <div class="pct">${pct}%</div>
+          <div class="lbl">התקדמות כוללת</div>
+        </div>
+      </div>
+    </div>
+
+    ${renderTrace()}
+
+    <div class="layout">
+      <div class="sidebar">
+        ${STAGES.map((s,i)=>{
+          const prog = stageProgress(s);
+          const complete = prog && prog.done===prog.total && prog.total>0;
+          return `<button class="stage-btn ${i===state.current?'active':''}" data-goto="${i}">
+            <span class="stage-num">${String(i+1).padStart(2,'0')}</span>
+            <span>${s.name}</span>
+            <span class="stage-check ${complete?'show':''}">✓</span>
+          </button>`;
+        }).join('')}
+      </div>
+
+      <div class="content">
+        ${stage.isGlossary ? renderGlossary() : stage.isCertificate ? renderCertificate() : renderStage(stage)}
+        <div class="nav-row">
+          <button class="nav-btn" data-nav="prev" ${state.current===0?'disabled':''}>← הקודם</button>
+          <button class="nav-btn primary" data-nav="next" ${state.current===STAGES.length-1?'disabled':''}>הבא ←</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  attachEventListeners();
+}
+
+function renderTrace(){
+  const hops = ['MUA','MTA / IronPort','SPF Check','DKIM Check','DMARC Policy','Inbox / Quarantine'];
+  const pct = overallPct();
+  return `
+    <div class="trace">
+      <div class="trace-label"><span>MESSAGE TRACE — עקרון פעולה כללי</span><span>${pct}% מוכן</span></div>
+      <div class="trace-track">
+        <div class="trace-line"></div>
+        <div class="trace-line-fill" style="width:${pct}%"></div>
+        ${hops.map((h,i)=>{
+          const litThreshold = (i/(hops.length-1))*100;
+          const lit = i===0 ? pct>0 : pct>=litThreshold;
+          return `<div class="hop ${lit?'lit':''}">
+            <div class="hop-dot"></div>
+            <div class="hop-name">${h}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderStage(stage){
+  const prog = stageProgress(stage);
+  const quiz = quizProgress();
+  return `
+    <div class="eyebrow">${String(state.current+1).padStart(2,'0')} / ${STAGES.length}</div>
+    <h2 class="stage-title">${stage.title}</h2>
+    <div class="stage-desc">${stage.desc}</div>
+
+    ${(stage.blocks||[]).map(b=>`
+      <div class="block">
+        <h3>${b.h}</h3>
+        ${b.html}
+      </div>
+    `).join('')}
+
+    ${stage.resources ? `
+      <div class="block">
+        <h3>קישורים</h3>
+        ${stage.resources.map(r=>`
+          <a class="resource-link" href="${r.url}" target="_blank" rel="noopener">
+            <span>
+              <div class="rl-title">${r.title}</div>
+              <div class="rl-url">${r.url}</div>
+            </span>
+            <span class="arrow">↗</span>
+          </a>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    ${stage.quiz ? `
+      <div class="block">
+        <h3>חידון לבדיקת הבנה (${quiz.correct}/${quiz.total} נכונות כוללות)</h3>
+        ${stage.quiz.map((q,idx)=>renderQuizQuestion(stage.id, idx, q)).join('')}
+      </div>
+    ` : ''}
+
+    ${stage.checklist ? `
+      <div class="block">
+        <h3>רשימת בדיקה עצמית ${prog?`(${prog.done}/${prog.total})`:''}</h3>
+        <div class="checklist">
+          ${stage.checklist.map((item,idx)=>{
+            const isDone = (state.checks[stage.id]||[]).includes(idx);
+            return `<div class="check-item ${isDone?'done':''}">
+              <input type="checkbox" id="chk-${stage.id}-${idx}" data-check="${idx}" data-stage="${stage.id}" ${isDone?'checked':''}>
+              <label for="chk-${stage.id}-${idx}">${item}</label>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="notes-section">
+      <label class="notes-label">הערות אישיות</label>
+      <textarea class="notes-textarea" data-stage="${stage.id}" placeholder="כתוב כאן הערות, תובנות או שאלות...">${state.notes[stage.id]||''}</textarea>
+    </div>
+  `;
+}
+
+function renderQuizQuestion(stageId, quizIdx, q){
+  const userAnswer = (state.quizAnswers[stageId]||{})[quizIdx];
+  const answered = userAnswer !== undefined;
+  const isCorrect = answered && userAnswer === q.correct;
+
+  return `
+    <div class="quiz-container">
+      <div class="quiz-question">${quizIdx+1}. ${q.q}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt,i)=>{
+          let cls = 'quiz-option';
+          if(answered){
+            cls += ' disabled';
+            if(i === userAnswer) cls += isCorrect ? ' correct' : ' incorrect';
+            if(i === q.correct && !isCorrect) cls += ' correct';
+          }
+          return `<div class="${cls}" data-stage="${stageId}" data-quiz="${quizIdx}" data-option="${i}">${opt}</div>`;
+        }).join('')}
+      </div>
+      ${answered ? `
+        <div class="quiz-feedback ${isCorrect?'correct':'incorrect'}">
+          ${isCorrect ? '✓ נכון!' : '✗ לא נכון.'} ${q.explanation}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderGlossary(){
+  return `
+    <div class="eyebrow">${String(state.current+1).padStart(2,'0')} / ${STAGES.length}</div>
+    <h2 class="stage-title">מילון מושגים מרכזי</h2>
+    <div class="stage-desc">רפרנס מהיר. חפשו לפי מונח או תיאור.</div>
+    <input class="glossary-search" id="glossary-search" placeholder="חיפוש מונח... (למשל: DKIM)">
+    <div class="term-grid" id="term-grid">
+      ${TERMS.map(term=>`
+        <div class="term-card" data-term="${term.t.toLowerCase()}" data-def="${term.d.toLowerCase()}">
+          <div class="term">${term.t}</div>
+          <div class="def">${term.d}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderCertificate(){
+  const pct = overallPct();
+  const quiz = quizProgress();
+  const days = state.startDate ? Math.ceil((new Date() - new Date(state.startDate)) / (1000*60*60*24)) : 0;
+
+  return `
+    <div class="eyebrow">${String(state.current+1).padStart(2,'0')} / ${STAGES.length}</div>
+    <h2 class="stage-title">🎓 סיום התוכנית</h2>
+    <div class="stage-desc">כל הכבוד על השלמת מסלול ההכשרה ב-IronPort!</div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">${pct}%</div>
+        <div class="stat-label">משימות הושלמו</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${quiz.correct}/${quiz.total}</div>
+        <div class="stat-label">תשובות נכונות בחידונים</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${days}</div>
+        <div class="stat-label">ימי למידה</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${Object.keys(state.notes).length}</div>
+        <div class="stat-label">הערות נכתבו</div>
+      </div>
+    </div>
+
+    ${pct === 100 ? `
+      <div class="certificate">
+        <div class="cert-title">תעודת הכשרה</div>
+        <p>מוענקת בזאת תעודה זו ל</p>
+        <div class="cert-name">מומחה IronPort מוסמך</div>
+        <p>על השלמת מסלול ההכשרה המקיף<br>בנושא Cisco Secure Email Gateway</p>
+        <div class="cert-date">${new Date().toLocaleDateString('he-IL')}</div>
+      </div>
+    ` : `
+      <div class="note">
+        <b>כמעט שם!</b> השלם את כל המשימות כדי לקבל את תעודת ההכשרה.
+      </div>
+    `}
+
+    <div class="block">
+      <h3>מה הלאה?</h3>
+      <ul>
+        <li>תרגל את כל התרחישים במעבדת dCloud</li>
+        <li>צור documentation פנימית לצוות CSOC</li>
+        <li>הכן case studies מהאירועים האמיתיים שלך</li>
+        <li>עקוב אחר Cisco Talos Blog לעדכוני איומים</li>
+        <li>שקול להתקדם ל-Cisco Email Security Specialist certification</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>משאבים נוספים</h3>
+      <a class="resource-link" href="https://www.cisco.com/c/en/us/support/security/email-security-appliance/tsd-products-support-series-home.html" target="_blank" rel="noopener">
+        <span>
+          <div class="rl-title">Cisco Email Security Documentation</div>
+          <div class="rl-url">cisco.com/support/email-security</div>
+        </span>
+        <span class="arrow">↗</span>
+      </a>
+      <a class="resource-link" href="https://blog.talosintelligence.com/" target="_blank" rel="noopener">
+        <span>
+          <div class="rl-title">Talos Intelligence Blog</div>
+          <div class="rl-url">blog.talosintelligence.com</div>
+        </span>
+        <span class="arrow">↗</span>
+      </a>
+    </div>
+  `;
+}
+
+function filterGlossary(q){
+  const query = q.trim().toLowerCase();
+  document.querySelectorAll('#term-grid .term-card').forEach(card=>{
+    const term = card.dataset.term;
+    const def = card.dataset.def;
+    const match = term.includes(query) || def.includes(query);
+    card.style.display = match ? '' : 'none';
+  });
+}
+
+function attachEventListeners(){
+  document.querySelectorAll('[data-goto]').forEach(btn=>{
+    btn.addEventListener('click', ()=>goStage(parseInt(btn.dataset.goto)));
+  });
+
+  document.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const dir = btn.dataset.nav==='next' ? 1 : -1;
+      const ni = state.current+dir;
+      if(ni>=0 && ni<STAGES.length) goStage(ni);
+    });
+  });
+
+  document.querySelectorAll('[data-check]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      toggleCheck(cb.dataset.stage, parseInt(cb.dataset.check));
+    });
+  });
+
+  const search = document.getElementById('glossary-search');
+  if(search){
+    search.addEventListener('input', ()=>filterGlossary(search.value));
+  }
+
+  document.querySelectorAll('.notes-textarea').forEach(ta=>{
+    ta.addEventListener('blur', ()=>{
+      saveNote(ta.dataset.stage, ta.value);
+    });
+  });
+
+  document.querySelectorAll('.quiz-option:not(.disabled)').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      answerQuiz(opt.dataset.stage, parseInt(opt.dataset.quiz), parseInt(opt.dataset.option));
+    });
+  });
+}
+
+/* ============ KEYBOARD SHORTCUTS ============ */
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+  if(e.key === 'ArrowRight' && state.current > 0){
+    goStage(state.current - 1);
+  } else if(e.key === 'ArrowLeft' && state.current < STAGES.length - 1){
+    goStage(state.current + 1);
+  }
+});
+
+/* ============ INIT ============ */
+loadState();
 </script>
 </body>
 </html>
