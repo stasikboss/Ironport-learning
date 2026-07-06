@@ -14,7 +14,13 @@
       "Bash(vercel --version:*)",
       "Bash(git init:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh:*)",
+      "Bash(winget install:*)",
+      "Bash(cmd.exe /c \"gh --version\")",
+      "Bash(git push origin main)",
+      "WebFetch(domain:ironport-learning-1u9u-jka99ymqs-stas-akimovs-projects.vercel.app)"
     ]
   }
 }
